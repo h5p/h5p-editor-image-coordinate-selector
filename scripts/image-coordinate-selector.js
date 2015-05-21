@@ -28,26 +28,20 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
     this.imageField = H5PEditor.findField(this.field.imagePath, this.parent);
 
     if (this.imageField === undefined) {
-      throw "I need an image field to do my job";
-    }
-
-    if (this.imageField !== undefined) {
-      // H5PEditor.followField() does not work for the first element in list
-      // as it is used in Image Hotspots
-      this.imageField.changes.push(function () {
-        var params = self.imageField.params;
-        if (params === undefined) {
-          return self.clearImage();
-        }
-
-        self.updateImage(params.path);
-        if(self.params && self.params.x && self.params.y) {
-          self.updateHotspot(self.params.x, self.params.y);
-        }
-      });
+      throw new Error('I need an image field to do my job');
     }
 
     self.$container = $('<div>', {
+      'class': 'field text h5p-image-coordinate-selector'
+    });
+
+    // Add header:
+    $('<span>', {
+      'class': 'h5peditor-label',
+      html: self.field.label
+    }).appendTo(self.$container);
+
+    self.$imgContainer = $('<div>', {
       'class': 'image-coordinate-selector',
       click: function (e) {
         var offset = $(this).offset();
@@ -57,23 +51,46 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
         var xInPercent = self.fixPercent((x/$(this).width())*100);
         var yInPercent = self.fixPercent((y/$(this).height())*100);
 
-        // Set visual element
-        self.updateHotspot(xInPercent, yInPercent);
-
         // Save the value
-        self.params = {x: xInPercent, y: yInPercent};
-        self.setValue(self.field, self.params);
+        self.saveCoordinate(xInPercent, yInPercent);
       }
-    });
+    }).appendTo(self.$container);
 
     self.$hotspot = $('<div>', {
       'class': 'image-coordinate-hotspot'
+    }).appendTo(self.$imgContainer);
+
+    // Add description:
+    $('<span>', {
+      'class': 'h5peditor-field-description',
+      html: self.field.description
     }).appendTo(self.$container);
+
+
+    // H5PEditor.followField() does not work for the first element in list.
+    // At least not thwe way it is used in Image Hotspots. Teherfore using changes
+    // array directly.
+    this.imageField.changes.push(function () {
+      var params = self.imageField.params;
+      if (params === undefined) {
+        return self.clearImage();
+      }
+
+      self.updateImage(params.path);
+    });
 
     if(self.imageField.params && self.imageField.params.path) {
       self.updateImage(self.imageField.params.path);
     }
-  };
+
+    // If params not set, use default values:
+    if (params === undefined || params.x === undefined || params.y === undefined) {
+      this.saveCoordinate(45, 45);
+    }
+    else {
+      self.updateHotspot(self.params.x, self.params.y);
+    }
+  }
 
   /**
    * Append the field to the wrapper.
@@ -82,6 +99,15 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
    */
   ImageCoordinateSelector.prototype.appendTo = function ($wrapper) {
     this.$container.appendTo($wrapper);
+  };
+
+  ImageCoordinateSelector.prototype.saveCoordinate = function (x, y) {
+    // Save the value
+    this.params = {x: x, y: y};
+    this.setValue(this.field, this.params);
+
+    // Set visual element
+    this.updateHotspot(x, y);
   };
 
   /**
@@ -98,14 +124,14 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
     // Remove image if present
     this.clearImage();
     // Create image
-    this.$container.append('<img src="' + H5P.getPath(path, H5PEditor.contentId) + '">');
+    this.$imgContainer.append('<img src="' + H5P.getPath(path, H5PEditor.contentId) + '">');
   };
 
   /**
    * Remove image
    */
   ImageCoordinateSelector.prototype.clearImage = function () {
-    this.$container.find('img').remove();
+    this.$imgContainer.find('img').remove();
   };
 
   /**
@@ -144,7 +170,7 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
    * Remove me. Invoked by core
    */
   ImageCoordinateSelector.prototype.remove = function () {
-    this.$container.remove();
+    this.$imgContainer.remove();
   };
 
   return ImageCoordinateSelector;
