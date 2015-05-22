@@ -32,7 +32,7 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
     }
 
     self.$container = $('<div>', {
-      'class': 'field text h5p-image-coordinate-selector'
+      'class': 'field text h5p-image-coordinate-selector no-image'
     });
 
     // Add header:
@@ -125,6 +125,7 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
     this.clearImage();
     // Create image
     this.$imgContainer.append('<img src="' + H5P.getPath(path, H5PEditor.contentId) + '">');
+    this.$container.removeClass('no-image');
   };
 
   /**
@@ -132,6 +133,7 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
    */
   ImageCoordinateSelector.prototype.clearImage = function () {
     this.$imgContainer.find('img').remove();
+    this.$container.addClass('no-image');
   };
 
   /**

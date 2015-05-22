@@ -7,9 +7,7 @@
   "machineName": "H5PEditor.ImageCoordinateSelector",
   "author": "Joubel AS (fnoks)",
   "preloadedJs": [
-    {
-      "path": "scripts/image-coordinate-selector.js"
-    }
+    {"path": "scripts/image-coordinate-selector.js"}
   ],
   "preloadedCss": [
     {
