@@ -1,21 +1,21 @@
-var H5PEditor = H5PEditor || {};
-
 /**
  * ImageCoordinateSelector widget module
  *
- * @param {jQuery} $
+ * @param {H5P.jQuery} $
  */
 H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = (function ($) {
 
   /**
    * Creates an image coordinate selector.
    *
-   * @param {object} parent
-   * @param {object} field
-   * @param {object} params
+   * @class H5PEditor.ImageCoordinateSelector
+   *
+   * @param {Object} parent
+   * @param {Object} field
+   * @param {Object} params
    * @param {function} setValue
    *
-   * @returns {ImageCoordinateSelector}
+   * @throws {Error} If no image field is found
    */
   function ImageCoordinateSelector(parent, field, params, setValue) {
     var self = this;
@@ -25,7 +25,7 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
     this.params = params;
     this.setValue = setValue;
 
-    this.imageField = H5PEditor.findField(this.field.imagePath, this.parent);
+    this.imageField = H5PEditor.findField(this.field.imageFieldPath, this.parent);
 
     if (this.imageField === undefined) {
       throw new Error('I need an image field to do my job');
@@ -101,6 +101,12 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
     this.$container.appendTo($wrapper);
   };
 
+  /**
+   * Save coordinates
+   *
+   * @param {Number} x Value in percent
+   * @param {Number} y Value in percent
+   */
   ImageCoordinateSelector.prototype.saveCoordinate = function (x, y) {
     // Save the value
     this.params = {x: x, y: y};
@@ -113,7 +119,7 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
   /**
    * Update image
    *
-   * @param {string} path Image path
+   * @param {String} path Image path
    */
   ImageCoordinateSelector.prototype.updateImage = function (path) {
     if (this.imgPath === path) {
@@ -138,6 +144,9 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
 
   /**
    * Update visual hotspot placement
+   *
+   * @param {Number} x Value in percent
+   * @param {Number} y Value in percent
    */
   ImageCoordinateSelector.prototype.updateHotspot = function (x, y) {
     // Set visual element
@@ -150,6 +159,9 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
 
   /**
    * Making sure percent is an integer between 0 and 100
+   *
+   * @param {Number} percent
+   * @returns {Number}
    */
   ImageCoordinateSelector.prototype.fixPercent = function (percent) {
     percent = parseInt(percent);
@@ -160,7 +172,7 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
   /**
    * Validate the current values. Invoked by core
    *
-   * @returns {boolean} Valid or not
+   * @returns {Boolean} Valid or not
    */
   ImageCoordinateSelector.prototype.validate = function () {
     return this.params !== undefined && this.params.x !== undefined && this.params.y !== undefined &&
