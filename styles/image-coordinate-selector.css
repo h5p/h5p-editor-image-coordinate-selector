@@ -8,7 +8,7 @@
   box-shadow: 0 0 10px 0 #666666;
   border: 1px solid #fff;
 }
-.imagecoordinateselector.no-image {
+.imageCoordinateSelector.no-image .image-coordinate-selector {
   display: none;
 }
 .image-coordinate-selector > img {

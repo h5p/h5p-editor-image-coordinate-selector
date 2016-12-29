@@ -31,12 +31,9 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
       throw new Error('I need an image field to do my job');
     }
 
-    self.$container = $(H5PEditor.createItem(
-        this.field.widget + ' no-image',
-        H5PEditor.createLabel(this.field),
-        self.field.description,
-        '<div class="image-coordinate-selector"><div class="image-coordinate-hotspot"></div></div>'
-    ));
+    self.$container = $(H5PEditor.createFieldMarkup(this.field,
+      '<div class="image-coordinate-selector"><div class="image-coordinate-hotspot"></div></div>')
+    ).addClass('no-image');
 
     self.$imgContainer = self.$container.find('.image-coordinate-selector').click(function (event) {
       var $this = $(this);
