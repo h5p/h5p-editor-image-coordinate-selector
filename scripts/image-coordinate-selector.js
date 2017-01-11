@@ -31,41 +31,23 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
       throw new Error('I need an image field to do my job');
     }
 
-    self.$container = $('<div>', {
-      'class': 'field text h5p-image-coordinate-selector no-image'
+    self.$container = $(H5PEditor.createFieldMarkup(this.field,
+      '<div class="image-coordinate-selector"><div class="image-coordinate-hotspot"></div></div>')
+    ).addClass('no-image');
+
+    self.$imgContainer = self.$container.find('.image-coordinate-selector').click(function (event) {
+      var $this = $(this);
+      var offset = $this.offset();
+      var x = event.pageX - offset.left - 5;
+      var y = event.pageY - offset.top - 5;
+
+      var xInPercent = self.fixPercent((x / $this.width()) * 100);
+      var yInPercent = self.fixPercent((y / $this.height()) * 100);
+
+      // Save the value
+      self.saveCoordinate(xInPercent, yInPercent);
     });
-
-    // Add header:
-    $('<span>', {
-      'class': 'h5peditor-label',
-      html: self.field.label
-    }).appendTo(self.$container);
-
-    self.$imgContainer = $('<div>', {
-      'class': 'image-coordinate-selector',
-      click: function (e) {
-        var offset = $(this).offset();
-        var x = e.pageX - offset.left - 5;
-        var y = e.pageY - offset.top - 5;
-
-        var xInPercent = self.fixPercent((x/$(this).width())*100);
-        var yInPercent = self.fixPercent((y/$(this).height())*100);
-
-        // Save the value
-        self.saveCoordinate(xInPercent, yInPercent);
-      }
-    }).appendTo(self.$container);
-
-    self.$hotspot = $('<div>', {
-      'class': 'image-coordinate-hotspot'
-    }).appendTo(self.$imgContainer);
-
-    // Add description:
-    $('<span>', {
-      'class': 'h5peditor-field-description',
-      html: self.field.description
-    }).appendTo(self.$container);
-
+    self.$hotspot = self.$container.find('.image-coordinate-hotspot');
 
     // H5PEditor.followField() does not work for the first element in list.
     // At least not thwe way it is used in Image Hotspots. Teherfore using changes
