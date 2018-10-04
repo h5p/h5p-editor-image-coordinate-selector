@@ -61,7 +61,7 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
       self.updateImage(params.path);
     });
 
-    if(self.imageField.params && self.imageField.params.path) {
+    if (self.imageField.params && self.imageField.params.path) {
       self.updateImage(self.imageField.params.path);
     }
 
