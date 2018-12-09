@@ -24,6 +24,10 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
     this.field = field;
     this.params = params;
     this.setValue = setValue;
+    this.legacyPositioning = false;
+    if (params && params.legacyPositioning === true) {
+      this.legacyPositioning = true;
+    }
 
     this.imageField = H5PEditor.findField(this.field.imageFieldPath, this.parent);
 
@@ -32,21 +36,39 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
     }
 
     self.$container = $(H5PEditor.createFieldMarkup(this.field,
-      '<div class="image-coordinate-selector"><div class="image-coordinate-hotspot"></div></div>')
+      '<div class="image-coordinate-selector"><div class="image-coordinate-hotspot"></div></div><button aria-label="Resize" title="resize" class="image-coordinate-resizer fa fa-lock"></button>')
     ).addClass('no-image');
 
     self.$imgContainer = self.$container.find('.image-coordinate-selector').click(function (event) {
       var $this = $(this);
       var offset = $this.offset();
-      var x = event.pageX - offset.left - 5;
-      var y = event.pageY - offset.top - 5;
+      var x = event.pageX - offset.left;
+      var y = event.pageY - offset.top;
 
       var xInPercent = self.fixPercent((x / $this.width()) * 100);
       var yInPercent = self.fixPercent((y / $this.height()) * 100);
 
+      // We don't use legacy positioning for new clicks
+      self.legacyPositioning = false; 
+
       // Save the value
       self.saveCoordinate(xInPercent, yInPercent);
     });
+
+    self.$container.find('.image-coordinate-resizer').click(function (event) {
+      var $this = $(this);
+      if (self.$imgContainer.hasClass('image-coordinate-wider')) {
+        $this.addClass('fa-lock');
+        $this.removeClass('fa-tint');
+        self.$imgContainer.removeClass('image-coordinate-wider');
+      }
+      else {
+        $this.removeClass('fa-lock');
+        $this.addClass('fa-tint');
+        self.$imgContainer.addClass('image-coordinate-wider');
+      }
+    });
+
     self.$hotspot = self.$container.find('.image-coordinate-hotspot');
 
     // H5PEditor.followField() does not work for the first element in list.
@@ -67,7 +89,7 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
 
     // If params not set, use default values:
     if (params === undefined || params.x === undefined || params.y === undefined) {
-      this.saveCoordinate(45, 45);
+      this.saveCoordinate(50, 50);
     }
     else {
       self.updateHotspot(self.params.x, self.params.y);
@@ -92,6 +114,9 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
   ImageCoordinateSelector.prototype.saveCoordinate = function (x, y) {
     // Save the value
     this.params = {x: x, y: y};
+    if (self.legacyPositioning === true) {
+      this.params.legacyPositioning = true;
+    }
     this.setValue(this.field, this.params);
 
     // Set visual element
@@ -133,8 +158,8 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
   ImageCoordinateSelector.prototype.updateHotspot = function (x, y) {
     // Set visual element
     this.$hotspot.css({
-      left: x + '%',
-      top: y + '%',
+      left: 'calc(' + x + '% - 5px)',
+      top: 'calc(' + y + '% - 5px)',
       display: 'block'
     });
   };
@@ -146,7 +171,9 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
    * @returns {Number}
    */
   ImageCoordinateSelector.prototype.fixPercent = function (percent) {
-    percent = parseInt(percent);
+    if (isNaN(percent)) {
+      percent = 50;
+    }
     return percent < 0 ? 0 : (percent > 100 ? 100 : percent);
   };
 

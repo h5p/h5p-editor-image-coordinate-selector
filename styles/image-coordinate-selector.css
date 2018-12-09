@@ -7,6 +7,10 @@
   -moz-box-shadow: 0 0 10px 0 #666666;
   box-shadow: 0 0 10px 0 #666666;
   border: 1px solid #fff;
+  transition: max-width 0.4s;
+}
+.image-coordinate-selector.image-coordinate-wider {
+  max-width: 100%;
 }
 .imageCoordinateSelector.no-image .image-coordinate-selector {
   display: none;
@@ -14,6 +18,12 @@
 .image-coordinate-selector > img {
   width: 100%;
   cursor: crosshair;
+}
+.image-coordinate-resizer {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 .image-coordinate-hotspot {
   display: none;
