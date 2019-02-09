@@ -36,7 +36,7 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
     }
 
     self.$container = $(H5PEditor.createFieldMarkup(this.field,
-      '<div class="image-coordinate-selector"><div class="image-coordinate-hotspot"></div></div><button aria-label="Resize" title="resize" class="image-coordinate-resizer fa fa-lock"></button>')
+      '<div class="image-coordinate-selector"><div class="image-coordinate-hotspot"></div></div><button aria-label="Resize" title="resize" class="image-coordinate-resizer fa fa-search-plus"></button>')
     ).addClass('no-image');
 
     self.$imgContainer = self.$container.find('.image-coordinate-selector').click(function (event) {
@@ -58,13 +58,13 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
     self.$container.find('.image-coordinate-resizer').click(function (event) {
       var $this = $(this);
       if (self.$imgContainer.hasClass('image-coordinate-wider')) {
-        $this.addClass('fa-lock');
-        $this.removeClass('fa-tint');
+        $this.addClass('fa-search-plus');
+        $this.removeClass('fa-search-minus');
         self.$imgContainer.removeClass('image-coordinate-wider');
       }
       else {
-        $this.removeClass('fa-lock');
-        $this.addClass('fa-tint');
+        $this.removeClass('fa-search-plus');
+        $this.addClass('fa-search-minus');
         self.$imgContainer.addClass('image-coordinate-wider');
       }
     });
