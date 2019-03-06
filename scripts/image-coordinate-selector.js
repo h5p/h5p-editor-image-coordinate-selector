@@ -35,8 +35,16 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
       throw new Error('I need an image field to do my job');
     }
 
+    var resizeText = H5PEditor.t('H5PEditor.ImageCoordinateSelector', 'resize');
+
     self.$container = $(H5PEditor.createFieldMarkup(this.field,
-      '<div class="image-coordinate-selector"><div class="image-coordinate-hotspot"></div></div><button aria-label="Resize" title="resize" class="image-coordinate-resizer fa fa-search-plus"></button>')
+      '<div class="image-coordinate-selector">' +
+        '<div class="image-coordinate-hotspot"></div>' +
+      '</div>' +
+      '<button aria-label="' + resizeText + '" ' +
+              'title="' + resizeText + '" ' +
+              'class="image-coordinate-resizer fa fa-search-plus"' +
+      '></button>')
     ).addClass('no-image');
 
     self.$imgContainer = self.$container.find('.image-coordinate-selector').click(function (event) {
@@ -55,7 +63,16 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
       self.saveCoordinate(xInPercent, yInPercent);
     });
 
-    self.$container.find('.image-coordinate-resizer').click(function (event) {
+    self.$imgContainer.on('transitionend', function () {
+      if (self.$imgContainer.hasClass('image-coordinate-wider')) {
+        self.$imgContainer.addClass('transition-complete');
+      }
+      else {
+        self.$imgContainer.removeClass('transition-complete');
+      }
+    });
+
+    self.$container.find('.image-coordinate-resizer').click(function () {
       var $this = $(this);
       if (self.$imgContainer.hasClass('image-coordinate-wider')) {
         $this.addClass('fa-search-plus');
@@ -157,9 +174,15 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
    */
   ImageCoordinateSelector.prototype.updateHotspot = function (x, y) {
     // Set visual element
+    var left = x + '%';
+    var top = y + '%';
+    if (!this.legacyPositioning) {
+      left += ' - 5px';
+      top += ' - 5px';
+    }
     this.$hotspot.css({
-      left: 'calc(' + x + '% - 5px)',
-      top: 'calc(' + y + '% - 5px)',
+      left: 'calc(' + left + ')',
+      top: 'calc(' + top + ')',
       display: 'block'
     });
   };
