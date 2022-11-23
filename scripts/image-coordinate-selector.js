@@ -31,7 +31,7 @@ H5PEditor.widgets.imageCoordinateSelector = H5PEditor.ImageCoordinateSelector = 
 
     this.imageField = H5PEditor.findField(this.field.imageFieldPath, this.parent);
 
-    if (this.imageField === undefined) {
+    if (this.imageField === false) {
       throw new Error('I need an image field to do my job');
     }
 
